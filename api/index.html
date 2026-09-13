@@ -1,1 +1,272 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annonce & Funnel Game Plan</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,sans-serif; background:#F7F5F1; color:#111; min-height:100vh; }
 
+.wrap  { max-width:640px; margin:0 auto; padding:48px 24px; }
+.rwrap { max-width:700px; margin:0 auto; padding:48px 24px 80px; }
+.hidden { display:none; }
+
+/* ── INTRO ── */
+.intro-lbl  { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#999; margin-bottom:20px; }
+.intro-h1   { font-size:34px; font-weight:800; color:#0D1B2A; line-height:1.15; margin-bottom:14px; }
+.intro-sub  { color:#666; font-size:15px; line-height:1.75; margin-bottom:36px; }
+
+/* ── PROGRESS ── */
+.progress { display:flex; gap:5px; margin-bottom:36px; }
+.pseg { flex:1; height:3px; border-radius:2px; background:#e0ddd7; }
+.pseg.done   { background:#961414; }
+.pseg.active { background:#c04040; }
+
+/* ── QUESTIONS ── */
+.phase-lbl { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#961414; margin-bottom:10px; }
+.q-h2      { font-size:20px; font-weight:700; color:#0D1B2A; line-height:1.4; margin-bottom:6px; }
+.q-hint    { font-size:13px; color:#aaa; line-height:1.6; margin-bottom:20px; }
+.q-note    { font-size:12px; color:#aaa; margin-bottom:20px; }
+
+.opt { width:100%; border:1px solid #ddd; border-radius:8px; padding:13px 18px; text-align:left; font-size:14px; background:#fff; cursor:pointer; color:#111; margin-bottom:8px; font-family:inherit; transition:all 0.12s; display:block; }
+.opt:hover  { border-color:#961414; background:#fff8f8; }
+.opt.active { border:1.5px solid #961414; background:#FBEAEA; font-weight:600; }
+
+textarea { width:100%; min-height:90px; border:1px solid #ddd; border-radius:8px; padding:14px 16px; font-size:14px; color:#111; resize:vertical; font-family:inherit; outline:none; line-height:1.6; background:#fff; }
+textarea:focus { border-color:#961414; }
+
+.q-counter { margin-top:16px; font-size:12px; color:#ccc; }
+
+/* ── BUTTONS ── */
+.btn-red { width:100%; background:#961414; color:#fff; border:none; border-radius:7px; padding:15px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+.btn-red:hover { background:#7a1010; }
+.btn-red:disabled { background:#ccc; cursor:default; }
+.btn-cont { width:100%; margin-top:16px; background:#961414; color:#fff; border:none; border-radius:7px; padding:14px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.2s; }
+.btn-cont:disabled { background:#ccc; cursor:default; }
+.btn-cont:not(:disabled):hover { background:#7a1010; }
+.btn-outline { flex:1; background:#fff; color:#0D1B2A; border:1px solid #ddd; border-radius:7px; padding:14px; font-size:14px; cursor:pointer; font-family:inherit; }
+.btn-outline:hover { border-color:#961414; }
+
+/* ── LOADING ── */
+.loading { text-align:center; padding:80px 0; }
+.spinner { font-size:36px; display:inline-block; animation:spin 1.2s linear infinite; color:#961414; margin-bottom:20px; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.loading p { color:#666; font-size:15px; }
+
+/* ── RESULT ── */
+.r-lbl   { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#999; margin-bottom:14px; }
+.r-badge { display:inline-block; background:#961414; color:#fff; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:4px; margin-bottom:18px; }
+.r-h1    { font-size:26px; font-weight:800; color:#0D1B2A; line-height:1.2; margin-bottom:12px; }
+.r-sub   { font-size:13px; color:#999; font-style:italic; line-height:1.65; margin-bottom:36px; }
+
+.week-row { display:flex; gap:28px; padding:20px 0; border-bottom:1.5px dashed #e0ddd7; }
+.week-lbl { font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#961414; min-width:80px; padding-top:2px; flex-shrink:0; }
+.week-txt { font-size:14px; color:#333; line-height:1.75; }
+.week-txt b { color:#0D1B2A; }
+
+.callout { background:#fff; border:1.5px solid #961414; border-radius:7px; padding:18px 22px; font-size:14px; color:#333; line-height:1.6; margin:24px 0 28px; }
+.callout b { color:#961414; }
+
+.cta-box { background:#0D1B2A; border-radius:10px; padding:26px 28px; text-align:center; margin-bottom:24px; }
+.cta-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#666; margin-bottom:10px; }
+.cta-h3  { color:#fff; font-size:17px; font-weight:700; margin-bottom:8px; line-height:1.4; }
+.cta-p   { color:#aaa; font-size:13px; line-height:1.7; margin-bottom:18px; }
+.cta-btn { display:inline-block; background:#961414; color:#fff; text-decoration:none; border-radius:6px; padding:12px 28px; font-size:14px; font-weight:600; }
+.cta-btn:hover { background:#7a1010; }
+
+.btns { display:flex; gap:12px; }
+
+/* ── ERROR ── */
+.err-wrap { text-align:center; padding:80px 0; }
+.err-msg  { color:#999; font-size:12px; background:#fff; padding:10px 14px; border-radius:6px; margin:8px 0 20px; word-break:break-word; text-align:left; }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="s-intro" class="wrap">
+  <div class="intro-lbl">Annonce &amp; Funnel analyse</div>
+  <h1 class="intro-h1">Din Game Plan</h1>
+  <p class="intro-sub">Få din skræddersyede implementeringsplan bygget, så du kan lancere denne strategi i din egen forretning og vækste din forretning og dit omsætningsmål.</p>
+  <button class="btn-red" onclick="start()">Start →</button>
+</div>
+
+<!-- QUESTIONS -->
+<div id="s-q" class="wrap hidden">
+  <div class="progress" id="prog"></div>
+  <div class="phase-lbl" id="plbl"></div>
+  <h2 class="q-h2" id="qtitle"></h2>
+  <p class="q-hint" id="qhint"></p>
+  <p class="q-note" id="qnote"></p>
+  <div id="qopts"></div>
+  <textarea id="qta" class="hidden" placeholder="Skriv her..."></textarea>
+  <button class="btn-cont hidden" id="bcont" onclick="next()">Fortsæt →</button>
+  <div class="q-counter" id="qcount"></div>
+</div>
+
+<!-- LOADING -->
+<div id="s-load" class="wrap hidden">
+  <div class="loading">
+    <div class="spinner">◌</div>
+    <p>Bygger din game plan…</p>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="s-result" class="rwrap hidden">
+  <div class="r-lbl">Annonce &amp; Funnel analyse</div>
+  <div class="r-badge" id="rbadge"></div>
+  <h1 class="r-h1" id="rheadline"></h1>
+  <p class="r-sub" id="rsub"></p>
+  <div id="ruger"></div>
+  <div class="callout"><b>Din næste handling:</b> <span id="rhandling"></span></div>
+  <div class="cta-box">
+    <div class="cta-sub">Vil du have mere?</div>
+    <h3 class="cta-h3">Book et betalt 1:1 Game Plan kald</h3>
+    <p class="cta-p">Gå dybere ned i din specifikke situation og få en skræddersyet annonce- og funnelstrategi på én time – med konkrete næste skridt du kan gå i gang med samme dag.</p>
+    <a href="https://checkout.lumant.ai/cart/Tcxe-11-game-plan" target="_blank" class="cta-btn">Book din 1:1 game plan kald →</a>
+  </div>
+  <div class="btns">
+    <button class="btn-outline" onclick="window.print()">Print / Gem som PDF ↗</button>
+    <button class="btn-outline" onclick="reset()">Start forfra</button>
+  </div>
+</div>
+
+<!-- ERROR -->
+<div id="s-err" class="wrap hidden">
+  <div class="err-wrap">
+    <p style="color:#666;margin-bottom:8px">Noget gik galt.</p>
+    <div class="err-msg" id="errmsg"></div>
+    <button class="btn-red" style="max-width:200px;margin:0 auto;display:block" onclick="reset()">Start forfra</button>
+  </div>
+</div>
+
+<script>
+const phases=[
+  {id:"profil",title:"Din Forretning",questions:[
+    {id:"p1",type:"text",q:"Hvad koster det du sælger?",hint:"Fx: 1:1 forløb 15.000 kr / Workshop 3.500 kr"},
+    {id:"p2",type:"single",q:"Hvad er din ideelle kundes inkomstniveau?",opts:["Lønmodtager","Selvstændig under 500.000 kr/år","Selvstændig 500.000–1.000.000 kr/år","Selvstændig over 1.000.000 kr/år","Varierer meget"]},
+    {id:"p3",type:"text",q:"Hvad er din ideelle kundes primære smerte?",hint:"Fx: de har masser af viden men ingen klienter..."},
+    {id:"p4",type:"multi",q:"Hvad har du allerede prøvet?",opts:["Meta-annoncer uden synlige resultater","Organisk content uden klienthenvendelser","Netværk, events og messer","Kold opsøgning / DM / LinkedIn outreach","Kursus eller coaching hos andre","Samarbejde med bureau eller marketingkonsulent","Ingen endnu – er ny i markedet"]},
+    {id:"p5",type:"text",q:"Hvad er din ideelle kundes drømmesudbytte?",hint:"Fx: fuldt booket kalender, forudsigelig indkomst..."},
+    {id:"p6",type:"single",q:"Hvad er dit mål for månedlig omsætning de næste 3-5 måneder?",opts:["50.000–100.000 kr/md","100.000–200.000 kr/md","200.000–500.000 kr/md","500.000+ kr/md"]},
+    {id:"p7",type:"text",q:"Omtrent hvor mange kvalificerede mennesker ser dit indhold om måneden?",hint:"Kender du ikke tallet – skriv ca. antal følgere eller tilmeldte på mailliste og platform."},
+    {id:"p8",type:"single",q:"Hvor hurtigt vil du rykke dig?",opts:["Organisk – langsommere, men nul kr. risiko","Annoncer – hurtigere, fuld kontrol over volume og hurtighed","Hybrid – hurtigere feedback og forudsigelighed"]}
+  ]},
+  {id:"trafik",title:"Trafik",questions:[
+    {id:"t0",type:"single",q:"Hvad er dit primære mål med din markedsføring lige nu?",opts:["Flere følgere og et større publikum på Instagram","Opbygge min liste / få tilmeldinger til webinar eller workshop","Sælge et kursus eller lavpris-tilbud direkte","Sælge forløb","Mere synlighed og engagement på mine opslag"]},
+    {id:"t1",type:"multi",q:"Hvad bruger du til at drive trafik?",opts:["Organisk indhold (Instagram/Facebook)","Organisk LinkedIn","Betalte Meta-annoncer","Google Ads","YouTube / podcast","Ingen endnu"]},
+    {id:"t2",type:"single",q:"Hvad er dit månedlige start-annoncebudget?",opts:["0 kr – planlægger ikke annoncer","500–2.000 kr","2.000–5.000 kr","5.000+ kr"]},
+    {id:"t3",type:"multi",q:"Hvad sender du trafik hen til?",opts:["Salgsside / landingsside","Book et kald-side","Lead magnet / freebie","Min hjemmeside generelt","Intet konkret endnu"]}
+  ]},
+  {id:"offer",title:"Offer",questions:[
+    {id:"o1",type:"multi",q:"Hvad sælger du primært?",opts:["1:1 forløb (enkeltbetaling)","Gruppeforløb","Kursus (solo/selvstudium)","Retainer / ongoing (månedlig)","Workshop eller dagskursus","Er ved at definere mit tilbud"]},
+    {id:"o3",type:"single",q:"Hvad er status på dit tilbud?",opts:["Klart defineret med salgsside der konverterer","Salgsside findes men konverterer dårligt","Tilbuddet er klart men ingen salgsside","Tilbuddet er uklart eller under udvikling"]}
+  ]},
+  {id:"nurture",title:"Opvarmning",questions:[
+    {id:"n1",type:"multi",q:"Hvordan opvarmer du leads?",opts:["E-mail nyhedsbrev","Automatisk e-mail sekvens","YouTube-videoer","Blog-indlæg / SEO","LinkedIn-indhold","Gør det ikke endnu"]},
+    {id:"n2",type:"single",q:"Hvad er status på din e-mailliste?",opts:["Aktiv – over 500 modtagere","Aktiv – under 500 modtagere","Lille eller inaktiv liste","Ingen liste endnu"]},
+    {id:"n3",type:"single",q:"Hvad sker der når nogen tilmelder sig din liste?",opts:["De modtager en velkomstsekvens","De modtager en enkelt velkomst-mail","De ryger bare på listen uden opfølgning","Jeg har ingen liste endnu"]},
+    {id:"n4",type:"multi",q:"Hvad bruger du som freebie / lead magnet?",opts:["PDF / guide / checkliste","Gratis workshop eller webinar","Lille gratis værktøj (mini-tool/quiz)","Mini-kursus (gratis e-mail forløb)","Har ingen freebie endnu"]}
+  ]},
+  {id:"salg",title:"Salg",questions:[
+    {id:"s1",type:"multi",q:"Hvordan sker salget hos dig?",opts:["Salgsside (self-serve betaling)","Discovery / salgs-kald","DM eller direkte besked","Keyword-svar på e-mail eller social","Salgsdokument sendt per mail","Ustruktureret – varierer meget"]},
+    {id:"s2",type:"multi",q:"Hvad sker der når et lead viser interesse?",opts:["De booker automatisk via kalender-link","De kan købe kurset/forløbet direkte (self-serve)","Jeg sender dem et tilbud / dokument manuelt","Jeg følger op i DM eller mail manuelt","Intet fast setup – jeg improviserer","De svarer ikke, og jeg ved ikke hvorfor"]},
+    {id:"s3",type:"multi",q:"Hvad er din største salgsudfordring?",opts:["For få leads ind","Leads viser interesse men forsvinder","Svært at lukke – de tøver eller siger nej","Pris-indvendinger","Salgsprocessen er ustruktureret og tidskrævende"]}
+  ]}
+];
+
+const allQ=phases.flatMap(p=>p.questions);
+let pi=0,qi=0,ans={},sel=[];
+
+const $=id=>document.getElementById(id);
+function show(s){["intro","q","load","result","err"].forEach(x=>$("s-"+x).classList.toggle("hidden",x!==s));}
+
+function start(){pi=0;qi=0;ans={};sel=[];render();show("q");}
+function reset(){show("intro");}
+
+function render(){
+  const ph=phases[pi],q=ph.questions[qi];
+  $("prog").innerHTML=phases.map((_,i)=>`<div class="pseg ${i<pi?"done":i===pi?"active":""}"></div>`).join("");
+  $("plbl").textContent=ph.title;
+  $("qtitle").textContent=q.q;
+  $("qhint").textContent=q.hint||"";
+  $("qnote").textContent=q.type==="multi"?"Vælg alt der passer.":q.type==="single"?"Vælg én.":"";
+  $("qcount").textContent=(Object.keys(ans).length+1)+" / "+allQ.length;
+  sel=[];
+  const ta=$("qta"),bc=$("bcont"),opts=$("qopts");
+  ta.value="";
+  if(q.type==="text"){
+    ta.classList.remove("hidden");opts.innerHTML="";bc.classList.remove("hidden");bc.disabled=true;
+    ta.oninput=()=>{bc.disabled=ta.value.trim().length===0;};
+  } else {
+    ta.classList.add("hidden");
+    opts.innerHTML=q.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="pick(this,'${o.replace(/['"]/g,"").replace(/\//g,"/")}','${q.type}')">${o}</button>`).join("");
+    if(q.type==="multi"){bc.classList.remove("hidden");bc.disabled=true;}
+    else bc.classList.add("hidden");
+  }
+}
+
+function pick(el,val,type){
+  if(type==="single"){
+    ans[phases[pi].questions[qi].id]=val;
+    advance();
+  } else {
+    el.classList.toggle("active");
+    if(el.classList.contains("active"))sel.push(val);
+    else sel=sel.filter(v=>v!==val);
+    $("bcont").disabled=sel.length===0;
+  }
+}
+
+function next(){
+  const q=phases[pi].questions[qi];
+  ans[q.id]=q.type==="text"?$("qta").value.trim():sel.join(" + ");
+  advance();
+}
+
+function advance(){
+  if(qi<phases[pi].questions.length-1){qi++;render();}
+  else if(pi<phases.length-1){pi++;qi=0;render();}
+  else generate();
+}
+
+async function generate(){
+  show("load");
+  const summary=phases.map(p=>`## ${p.title}\n`+p.questions.map(q=>`- ${q.q}\n  Svar: ${ans[q.id]||"–"}`).join("\n")).join("\n\n");
+  const prompt=`Du er Meta Ads og funnel-ekspert for selvstændige coaches, terapeuter, rådgivere og konsulenter i Skandinavien.
+
+${summary}
+
+Lav et kortfattet fingerpeg – ikke en fuld plan. Uge-for-uge implementeringsguide.
+
+KAMPAGNETYPE – vælg præcis én:
+- Intet/svagt lead flow / liste / webinar / workshop → LEADGENERERINGSKAMPAGNE (webinar, VSL eller workshop)
+- Vil automatisere salg / kurser → SALGS- OG KONVERTERINGSKAMPAGNE (produkt under 100 kr: quiz, værktøj, lydfil, video)
+- Vil have følgere / synlighed / interaktion → ENGAGEMENT- OG FØLGERKAMPAGNE på Instagram
+- Sælge forløb / booke kald / tilbud over 5.000 kr → LEADGENERERING med freebie + retargeting mod book-et-kald
+
+Regler: headline maks 15 ord. subtitle maks 20 ord. uger: 3 rækker. naesteHandling maks 20 ord.
+
+Svar KUN med valid JSON uden markdown-backticks:
+{"headline":"...","subtitle":"...","uger":[{"label":"Uge 1–2","indhold":"..."},{"label":"Uge 3–4","indhold":"..."},{"label":"Uge 5–6","indhold":"..."}],"naesteHandling":"...","kampagnetype":"..."}`;
+
+  try{
+    const r=await fetch("https://gameplan-api.vercel.app/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1200,messages:[{role:"user",content:prompt}]})});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message);
+    const raw=d.content.filter(c=>c.type==="text").map(c=>c.text).join("");
+    const plan=JSON.parse(raw.replace(/```json|```/g,"").trim());
+    $("rbadge").textContent=plan.kampagnetype||"";
+    $("rheadline").textContent=plan.headline||"";
+    $("rsub").textContent=plan.subtitle||"";
+    $("rhandling").textContent=plan.naesteHandling||"";
+    $("ruger").innerHTML=(plan.uger||[]).map(u=>`<div class="week-row"><div class="week-lbl">${u.label}</div><div class="week-txt">${(u.indhold||"").replace(/\*\*(.*?)\*\*/g,"<b>$1</b>")}</div></div>`).join("");
+    show("result");
+  }catch(e){$("errmsg").textContent=e.message||"Ukendt fejl";show("err");}
+}
+</script>
+</body>
+</html>
